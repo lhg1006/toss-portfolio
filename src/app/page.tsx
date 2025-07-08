@@ -1,95 +1,135 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client';
+
+import styled from '@emotion/styled';
+import { theme } from '@/styles/theme';
+import { 
+  Layout, 
+  AccountCard, 
+  TransactionList, 
+  QuickActions 
+} from '@/components';
+
+const PageTitle = styled.h1`
+  font-size: ${theme.typography.fontSize['3xl']};
+  font-weight: ${theme.typography.fontWeight.bold};
+  color: ${theme.colors.gray[900]};
+  margin-bottom: ${theme.spacing.xl};
+  text-align: center;
+  
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    font-size: ${theme.typography.fontSize['2xl']};
+    margin-bottom: ${theme.spacing.lg};
+  }
+`;
+
+const Section = styled.section`
+  margin-bottom: ${theme.spacing.xl};
+  
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    margin-bottom: ${theme.spacing.lg};
+  }
+`;
+
+const SectionTitle = styled.h2`
+  font-size: ${theme.typography.fontSize.xl};
+  font-weight: ${theme.typography.fontWeight.semibold};
+  color: ${theme.colors.gray[800]};
+  margin-bottom: ${theme.spacing.md};
+`;
+
+const AccountsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: ${theme.spacing.md};
+  margin-bottom: ${theme.spacing.xl};
+  
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    grid-template-columns: 1fr;
+    gap: ${theme.spacing.sm};
+  }
+`;
 
 export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const accounts = [
+    {
+      accountName: "토스뱅크 입출금",
+      accountNumber: "100012345678",
+      balance: 1250000,
+      cardColor: "blue" as const,
+    },
+    {
+      accountName: "토스뱅크 적금",
+      accountNumber: "200012345678",
+      balance: 5000000,
+      cardColor: "green" as const,
+    },
+  ];
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+  const transactions = [
+    {
+      id: "1",
+      type: "income" as const,
+      amount: 50000,
+      description: "카카오페이 충전",
+      date: new Date("2024-07-07T14:30:00"),
+      category: "충전",
+    },
+    {
+      id: "2",
+      type: "expense" as const,
+      amount: 12000,
+      description: "스타벅스 아메리카노",
+      date: new Date("2024-07-07T09:15:00"),
+      category: "카페",
+    },
+    {
+      id: "3",
+      type: "expense" as const,
+      amount: 8500,
+      description: "지하철 교통비",
+      date: new Date("2024-07-06T18:45:00"),
+      category: "교통",
+    },
+  ];
+
+  const handleTransfer = () => {
+    console.log("송금 기능");
+  };
+
+  const handlePay = () => {
+    console.log("결제 기능");
+  };
+
+  const handleTopUp = () => {
+    console.log("충전 기능");
+  };
+
+  return (
+    <Layout>
+      <PageTitle>토스뱅크</PageTitle>
+      
+      <Section>
+        <SectionTitle>내 계좌</SectionTitle>
+        <AccountsGrid>
+          {accounts.map((account, index) => (
+            <AccountCard key={index} {...account} />
+          ))}
+        </AccountsGrid>
+      </Section>
+
+      <Section>
+        <SectionTitle>빠른 실행</SectionTitle>
+        <QuickActions
+          onTransfer={handleTransfer}
+          onPay={handlePay}
+          onTopUp={handleTopUp}
+        />
+      </Section>
+
+      <Section>
+        <SectionTitle>최근 거래</SectionTitle>
+        <TransactionList transactions={transactions} />
+      </Section>
+    </Layout>
   );
 }
