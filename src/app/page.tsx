@@ -6,6 +6,7 @@ import { keyframes } from '@emotion/react';
 import { theme } from '@/styles/theme';
 import { 
   Layout, 
+  Header,
   AccountCard, 
   TransactionList, 
   QuickActions,
@@ -285,6 +286,7 @@ export default function Home() {
 
   return (
     <>
+      <Header title="토스뱅크" />
       <Layout>
         <PageTitle>토스뱅크</PageTitle>
         

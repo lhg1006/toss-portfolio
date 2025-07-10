@@ -97,7 +97,7 @@ export const Navigation: React.FC<NavigationProps> = ({
         window.location.href = '/transfer';
         break;
       case 'pay':
-        console.log('결제 페이지로 이동');
+        window.location.href = '/pay';
         break;
       case 'invest':
         console.log('투자 페이지로 이동');

@@ -47,26 +47,26 @@ const Main = styled.main`
   border-radius: ${theme.borderRadius.xl};
   box-shadow: ${theme.shadows.toss.glass};
   border: 1px solid rgba(255, 255, 255, 0.2);
-  margin-top: ${theme.spacing.md};
+  margin-top: calc(60px + ${theme.spacing.md}); /* Header height + margin */
   margin-bottom: ${theme.spacing.md};
   padding-bottom: 100px; /* 하단 네비게이션을 위한 공간 */
   
   @media (min-width: ${theme.breakpoints.tablet}) {
     padding: ${theme.spacing.lg};
     padding-bottom: 100px;
-    margin-top: ${theme.spacing.lg};
+    margin-top: calc(60px + ${theme.spacing.lg});
     margin-bottom: ${theme.spacing.lg};
   }
   
   @media (min-width: ${theme.breakpoints.desktop}) {
     padding: ${theme.spacing.xl};
     padding-bottom: 100px;
-    margin-top: ${theme.spacing.xl};
+    margin-top: calc(60px + ${theme.spacing.xl});
     margin-bottom: ${theme.spacing.xl};
   }
   
   @media (max-width: ${theme.breakpoints.mobile}) {
-    margin-top: ${theme.spacing.sm};
+    margin-top: calc(56px + ${theme.spacing.sm}); /* Mobile header height */
     margin-bottom: ${theme.spacing.sm};
     border-radius: ${theme.borderRadius.lg};
     padding-bottom: 100px;

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
 import { theme } from '@/styles/theme';
-import { Layout, Navigation } from '@/components';
+import { Layout, Header, Navigation } from '@/components';
 import { AmountInput } from '@/components/Transfer/AmountInput';
 import { RecipientSelect } from '@/components/Transfer/RecipientSelect';
 import { TransferConfirm } from '@/components/Transfer/TransferConfirm';
@@ -103,6 +103,7 @@ export default function TransferPage() {
 
   return (
     <>
+      <Header title="송금" showBackButton />
       <Layout>
         <TransferContainer>
           <ProgressBar>

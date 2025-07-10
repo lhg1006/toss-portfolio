@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { theme } from '@/styles/theme';
 
@@ -107,6 +107,8 @@ export const CardSlider: React.FC<CardSliderProps> = ({ children, showIndicators
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [startTranslate, setStartTranslate] = useState(0);
+  const [cardsPerView, setCardsPerView] = useState(1);
+  const [isClient, setIsClient] = useState(false);
   const sliderRef = useRef<HTMLDivElement>(null);
 
   // Get cards per view based on screen size
@@ -118,10 +120,36 @@ export const CardSlider: React.FC<CardSliderProps> = ({ children, showIndicators
     return 1; // mobile
   };
 
-  const cardsPerView = getCardsPerView();
+  useEffect(() => {
+    setIsClient(true);
+    setCardsPerView(getCardsPerView());
+
+    const handleResize = () => {
+      setCardsPerView(getCardsPerView());
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const maxIndex = Math.max(0, children.length - cardsPerView);
   const cardWidth = 100 / children.length; // Each card takes equal space in track
   const totalTrackWidth = (children.length / cardsPerView) * 100; // Track width relative to container
+
+  // 클라이언트에서만 렌더링되도록 보장
+  if (!isClient) {
+    return (
+      <SliderContainer>
+        <SliderWrapper>
+          <SliderTrack translateX={0} isDragging={false} totalWidth={100}>
+            {children.map((child, index) => (
+              <SlideItem key={index} cardWidth={100 / children.length}>{child}</SlideItem>
+            ))}
+          </SliderTrack>
+        </SliderWrapper>
+      </SliderContainer>
+    );
+  }
 
   const handlePrev = () => {
     setCurrentIndex(Math.max(0, currentIndex - 1));
