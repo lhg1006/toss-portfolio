@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { AccountCard } from './AccountCard';
+import { ToastProvider } from '@/hooks/useToast';
 
 const meta = {
   title: 'Components/AccountCard',
@@ -17,6 +18,13 @@ const meta = {
       control: { type: 'number' },
     },
   },
+  decorators: [
+    (Story) => (
+      <ToastProvider>
+        <Story />
+      </ToastProvider>
+    ),
+  ],
 } satisfies Meta<typeof AccountCard>;
 
 export default meta;

@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect, useRef, useCallback } from 'react';
 import styled from '@emotion/styled';
 import { theme } from '@/styles/theme';
 import { Card } from '@/components/Card';
@@ -15,20 +16,25 @@ export interface Transaction {
 
 interface TransactionListProps {
   transactions: Transaction[];
+  onLoadMore?: () => void;
+  hasMore?: boolean;
+  loading?: boolean;
 }
 
 const TransactionCard = styled.div`
-  background: ${theme.colors.white};
+  background: ${theme.colors.backgrounds.glassBlur};
+  backdrop-filter: blur(10px) saturate(120%);
   border-radius: ${theme.borderRadius.lg};
   padding: ${theme.spacing.lg};
   margin-bottom: ${theme.spacing.sm};
-  box-shadow: ${theme.shadows.sm};
-  border: 1px solid ${theme.colors.gray[200]};
-  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: ${theme.shadows.toss.card};
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: ${theme.effects.transition};
   
   &:hover {
-    box-shadow: ${theme.shadows.md};
-    transform: translateY(-1px);
+    box-shadow: ${theme.shadows.toss.button};
+    transform: translateY(-2px);
+    background: ${theme.colors.white};
   }
   
   &:last-child {
@@ -57,7 +63,7 @@ const TransactionInfo = styled.div`
 
 const TransactionDescription = styled.h4`
   font-size: ${theme.typography.fontSize.lg};
-  font-weight: ${theme.typography.fontWeight.semibold};
+  font-weight: ${theme.typography.fontWeight.bold};
   color: ${theme.colors.gray[900]};
   margin: 0;
   letter-spacing: -0.01em;
@@ -79,8 +85,9 @@ const TransactionCategory = styled.span`
   padding: 4px ${theme.spacing.sm};
   border-radius: ${theme.borderRadius.sm};
   font-size: ${theme.typography.fontSize.xs};
-  font-weight: ${theme.typography.fontWeight.semibold};
+  font-weight: ${theme.typography.fontWeight.bold};
   letter-spacing: -0.01em;
+  border: 1px solid rgba(49, 130, 246, 0.2);
 `;
 
 const TransactionAmount = styled.div<{ type: 'income' | 'expense' }>`
@@ -92,11 +99,12 @@ const TransactionAmount = styled.div<{ type: 'income' | 'expense' }>`
 
 const Amount = styled.span<{ type: 'income' | 'expense' }>`
   font-size: ${theme.typography.fontSize.xl};
-  font-weight: ${theme.typography.fontWeight.bold};
+  font-weight: ${theme.typography.fontWeight.black};
   color: ${({ type }) =>
     type === 'income' ? theme.colors.success : theme.colors.gray[900]};
   letter-spacing: -0.02em;
   line-height: ${theme.typography.lineHeight.tight};
+  font-variant-numeric: tabular-nums;
   
   @media (max-width: ${theme.breakpoints.mobile}) {
     font-size: ${theme.typography.fontSize.lg};
@@ -115,7 +123,95 @@ const EmptyState = styled.div`
   color: ${theme.colors.gray[500]};
 `;
 
-export const TransactionList: React.FC<TransactionListProps> = ({ transactions }) => {
+const LoadingIndicator = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: ${theme.spacing.lg};
+  color: ${theme.colors.gray[600]};
+  font-size: ${theme.typography.fontSize.sm};
+`;
+
+const LoadMoreButton = styled.button`
+  width: 100%;
+  padding: ${theme.spacing.md};
+  background: ${theme.colors.gray[100]};
+  border: none;
+  border-radius: ${theme.borderRadius.lg};
+  color: ${theme.colors.gray[700]};
+  font-size: ${theme.typography.fontSize.md};
+  font-weight: ${theme.typography.fontWeight.medium};
+  cursor: pointer;
+  transition: ${theme.effects.transition};
+  margin-top: ${theme.spacing.md};
+  
+  &:hover {
+    background: ${theme.colors.gray[200]};
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+const InfiniteScrollContainer = styled.div`
+  max-height: 600px;
+  overflow-y: auto;
+  
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: ${theme.colors.gray[100]};
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: ${theme.colors.gray[300]};
+    border-radius: 3px;
+    
+    &:hover {
+      background: ${theme.colors.gray[400]};
+    }
+  }
+`;
+
+export const TransactionList: React.FC<TransactionListProps> = ({ 
+  transactions, 
+  onLoadMore, 
+  hasMore = false, 
+  loading = false 
+}) => {
+  const observerRef = useRef<HTMLDivElement>(null);
+
+  const handleIntersect = useCallback(
+    (entries: IntersectionObserverEntry[]) => {
+      const [entry] = entries;
+      if (entry.isIntersecting && hasMore && !loading && onLoadMore) {
+        onLoadMore();
+      }
+    },
+    [hasMore, loading, onLoadMore]
+  );
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(handleIntersect, {
+      threshold: 0.1,
+    });
+
+    const currentRef = observerRef.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, [handleIntersect]);
   const formatAmount = (amount: number) => {
     return new Intl.NumberFormat('ko-KR', {
       style: 'currency',
@@ -141,7 +237,7 @@ export const TransactionList: React.FC<TransactionListProps> = ({ transactions }
   }
 
   return (
-    <div>
+    <InfiniteScrollContainer>
       {transactions.map((transaction) => (
         <TransactionCard key={transaction.id}>
           <TransactionItem>
@@ -162,6 +258,22 @@ export const TransactionList: React.FC<TransactionListProps> = ({ transactions }
           </TransactionItem>
         </TransactionCard>
       ))}
-    </div>
+      
+      {loading && (
+        <LoadingIndicator>
+          거래 내역을 불러오는 중...
+        </LoadingIndicator>
+      )}
+      
+      {hasMore && !loading && onLoadMore && (
+        <LoadMoreButton onClick={onLoadMore}>
+          더 보기
+        </LoadMoreButton>
+      )}
+      
+      {onLoadMore && (
+        <div ref={observerRef} style={{ height: '20px' }} />
+      )}
+    </InfiniteScrollContainer>
   );
 };

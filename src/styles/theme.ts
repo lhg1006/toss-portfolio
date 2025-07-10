@@ -37,6 +37,14 @@ export const theme = {
       purple: '#8b5cf6',
       pink: '#f472b6',
     },
+    // 토스 배경 그라데이션
+    backgrounds: {
+      primary: 'linear-gradient(180deg, #fafbff 0%, #f0f4ff 100%)',
+      secondary: 'linear-gradient(180deg, #ffffff 0%, #f5f5f7 100%)',
+      card: 'linear-gradient(145deg, #ffffff 0%, #f5f5f7 100%)',
+      glass: 'rgba(255, 255, 255, 0.8)',
+      glassBlur: 'rgba(255, 255, 255, 0.9)',
+    },
     success: '#00c896', // 토스 초록
     warning: '#ff9500', // 토스 오렌지
     error: '#ff6b6b', // 토스 빨강
@@ -58,8 +66,18 @@ export const theme = {
   },
   typography: {
     fontFamily: {
-      sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'Segoe UI', 'Roboto', 'sans-serif'],
-      mono: ['SF Mono', 'Monaco', 'monospace'],
+      // 토스 프로덕트 산스 우선, 웹폰트 로드 실패 시 시스템 폰트 대체
+      sans: [
+        '"Toss Product Sans"',
+        'TossProductSans',
+        '-apple-system',
+        'BlinkMacSystemFont',
+        'SF Pro Text',
+        'Segoe UI',
+        'Roboto',
+        'sans-serif'
+      ],
+      mono: ['SF Mono', 'Monaco', 'Consolas', 'monospace'],
     },
     fontSize: {
       xs: '11px',
@@ -70,14 +88,16 @@ export const theme = {
       '2xl': '22px',
       '3xl': '28px',
       '4xl': '34px',
+      '5xl': '42px',
     },
     fontWeight: {
       light: 300,
       normal: 400,
       medium: 500,
-      semibold: 600,
-      bold: 700,
-      heavy: 800,
+      semibold: 600,  // 토스 기본 텍스트 가중치
+      bold: 700,      // 토스 강조 텍스트 가중치
+      heavy: 800,     // 토스 제목 가중치
+      black: 900,     // 토스 헤딩 가중치
     },
     lineHeight: {
       tight: 1.2,
@@ -100,5 +120,18 @@ export const theme = {
     md: '0 4px 12px rgba(0, 0, 0, 0.15)', // iOS 카드 그림자
     lg: '0 8px 25px rgba(0, 0, 0, 0.15)', // iOS 모달 그림자
     xl: '0 16px 40px rgba(0, 0, 0, 0.12)', // iOS 드롭 그림자
+    // 토스 스타일 그림자
+    toss: {
+      card: '0 2px 8px rgba(49, 130, 246, 0.1), 0 1px 3px rgba(49, 130, 246, 0.06)',
+      button: '0 4px 12px rgba(49, 130, 246, 0.15)',
+      float: '0 8px 25px rgba(49, 130, 246, 0.1)',
+      glass: '0 4px 20px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
+    },
+  },
+  // 토스 스타일 이펙트
+  effects: {
+    backdrop: 'backdrop-filter: blur(20px) saturate(180%)',
+    glass: 'backdrop-filter: blur(10px) saturate(120%)',
+    transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
   },
 };

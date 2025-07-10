@@ -4,3 +4,6 @@ export { Layout } from './Layout';
 export { AccountCard } from './AccountCard';
 export { TransactionList } from './TransactionList';
 export { QuickActions } from './QuickActions';
+export { Navigation } from './Navigation';
+export { BenefitsSummary } from './BenefitsSummary';
+export { CardSlider } from './CardSlider';

@@ -1,12 +1,60 @@
+/* 토스 프로덕트 산스 웹폰트 로딩 */
+@font-face {
+  font-family: 'Toss Product Sans';
+  src: url('https://static.toss.im/fonts/TossProductSans-Regular.woff2') format('woff2'),
+       url('https://static.toss.im/fonts/TossProductSans-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Toss Product Sans';
+  src: url('https://static.toss.im/fonts/TossProductSans-Medium.woff2') format('woff2'),
+       url('https://static.toss.im/fonts/TossProductSans-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Toss Product Sans';
+  src: url('https://static.toss.im/fonts/TossProductSans-SemiBold.woff2') format('woff2'),
+       url('https://static.toss.im/fonts/TossProductSans-SemiBold.woff') format('woff');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Toss Product Sans';
+  src: url('https://static.toss.im/fonts/TossProductSans-Bold.woff2') format('woff2'),
+       url('https://static.toss.im/fonts/TossProductSans-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 토스 디자인 토큰 */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --toss-blue: #3182f6;
+  --toss-blue-light: #e8f3ff;
+  --toss-gray-50: #fafafa;
+  --toss-gray-100: #f5f5f7;
+  --toss-gray-200: #e5e5ea;
+  --toss-gray-400: #8e8e93;
+  --toss-gray-900: #1c1c1e;
+  
+  --background: linear-gradient(180deg, #fafbff 0%, #f0f4ff 100%);
+  --foreground: #1c1c1e;
+  --card-background: rgba(255, 255, 255, 0.8);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%);
     --foreground: #ededed;
+    --card-background: rgba(44, 44, 46, 0.8);
   }
 }
 
@@ -16,12 +64,21 @@ body {
   overflow-x: hidden;
 }
 
+html {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  background-attachment: fixed;
+  font-family: 'Toss Product Sans', 'TossProductSans', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', 'Roboto', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  font-variant-numeric: lining-nums;
+  min-height: 100vh;
 }
 
 * {
@@ -30,13 +87,73 @@ body {
   margin: 0;
 }
 
+/* 토스 스타일 스크롤바 */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(49, 130, 246, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(49, 130, 246, 0.5);
+}
+
 a {
   color: inherit;
   text-decoration: none;
 }
 
+/* 토스 스타일 포커스 */
+*:focus {
+  outline: 2px solid var(--toss-blue);
+  outline-offset: 2px;
+}
+
+/* 토스 스타일 선택 */
+::selection {
+  background: var(--toss-blue-light);
+  color: var(--toss-blue);
+}
+
+/* 부드러운 스크롤 */
+html {
+  scroll-behavior: smooth;
+}
+
+/* 토스 스타일 버튼 기본 스타일 */
+button {
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
+  }
+}
+
+/* 모바일 터치 최적화 */
+@media (max-width: 768px) {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  body {
+    font-size: 15px;
   }
 }

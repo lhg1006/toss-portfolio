@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { GlobalStyles } from "@/styles/GlobalStyles";
+import { ToastProvider } from "@/hooks/useToast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,8 +29,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <QueryProvider>
-          <GlobalStyles />
-          {children}
+          <ToastProvider>
+            <GlobalStyles />
+            {children}
+          </ToastProvider>
         </QueryProvider>
       </body>
     </html>

@@ -7,13 +7,12 @@ import { Button } from '@/components/Button';
 interface QuickActionsProps {
   onTransfer: () => void;
   onPay: () => void;
-  onTopUp: () => void;
 }
 
 const ActionsContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: ${theme.spacing.sm};
+  gap: ${theme.spacing.lg};
   
   @media (max-width: ${theme.breakpoints.mobile}) {
     grid-template-columns: 1fr;
@@ -25,7 +24,8 @@ const ActionButton = styled(Button)`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: ${theme.spacing.xs};
+  justify-content: center;
+  gap: ${theme.spacing.md};
   padding: ${theme.spacing.md};
   height: auto;
   min-height: 80px;
@@ -35,6 +35,7 @@ const ActionButton = styled(Button)`
     justify-content: flex-start;
     min-height: 60px;
     padding: ${theme.spacing.md};
+    gap: ${theme.spacing.md};
   }
 `;
 
@@ -49,7 +50,7 @@ const ActionIcon = styled.div`
 
 const ActionLabel = styled.span`
   font-size: ${theme.typography.fontSize.sm};
-  font-weight: ${theme.typography.fontWeight.medium};
+  font-weight: ${theme.typography.fontWeight.bold};
   
   @media (max-width: ${theme.breakpoints.mobile}) {
     font-size: ${theme.typography.fontSize.md};
@@ -59,23 +60,17 @@ const ActionLabel = styled.span`
 export const QuickActions: React.FC<QuickActionsProps> = ({
   onTransfer,
   onPay,
-  onTopUp,
 }) => {
   return (
     <ActionsContainer>
       <ActionButton variant="primary" onClick={onTransfer}>
-        <ActionIcon>💸</ActionIcon>
+        <ActionIcon>💙</ActionIcon>
         <ActionLabel>송금</ActionLabel>
       </ActionButton>
       
       <ActionButton variant="secondary" onClick={onPay}>
         <ActionIcon>💳</ActionIcon>
         <ActionLabel>결제</ActionLabel>
-      </ActionButton>
-      
-      <ActionButton variant="outline" onClick={onTopUp}>
-        <ActionIcon>💰</ActionIcon>
-        <ActionLabel>충전</ActionLabel>
       </ActionButton>
     </ActionsContainer>
   );
