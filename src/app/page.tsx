@@ -52,12 +52,25 @@ const PageTitle = styled.h1`
   font-size: ${theme.typography.fontSize['3xl']};
   font-weight: ${theme.typography.fontWeight.bold};
   color: ${theme.colors.gray[900]};
-  margin-bottom: ${theme.spacing.xl};
+  margin-bottom: ${theme.spacing.sm};
   text-align: center;
   animation: ${fadeIn} 0.6s ease-out;
   
   @media (max-width: ${theme.breakpoints.mobile}) {
     font-size: ${theme.typography.fontSize['2xl']};
+    margin-bottom: ${theme.spacing.sm};
+  }
+`;
+
+const PortfolioSubtitle = styled.p`
+  font-size: ${theme.typography.fontSize.md};
+  color: ${theme.colors.gray[500]};
+  text-align: center;
+  margin: 0 0 ${theme.spacing.xl} 0;
+  animation: ${fadeIn} 0.6s ease-out 0.2s both;
+  
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    font-size: ${theme.typography.fontSize.sm};
     margin-bottom: ${theme.spacing.lg};
   }
 `;
@@ -309,6 +322,7 @@ export default function Home() {
       <Header title="토스뱅크" />
       <Layout>
         <PageTitle>토스뱅크</PageTitle>
+        <PortfolioSubtitle>포트폴리오 데모 - 실제 서비스가 아닙니다</PortfolioSubtitle>
         
         <Section>
           <SectionHeader>

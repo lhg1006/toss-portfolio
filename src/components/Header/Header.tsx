@@ -100,6 +100,22 @@ const HeaderRight = styled.div`
   }
 `;
 
+const PortfolioBadge = styled.div`
+  background: rgba(49, 130, 246, 0.1);
+  color: ${theme.colors.toss.blue};
+  padding: 4px ${theme.spacing.sm};
+  border-radius: ${theme.borderRadius.sm};
+  font-size: ${theme.typography.fontSize.xs};
+  font-weight: ${theme.typography.fontWeight.medium};
+  border: 1px solid rgba(49, 130, 246, 0.2);
+  backdrop-filter: blur(10px);
+  
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    font-size: 10px;
+    padding: 2px ${theme.spacing.xs};
+  }
+`;
+
 const StatusBar = styled.div`
   height: env(safe-area-inset-top, 0px);
   background: transparent;
@@ -149,11 +165,10 @@ export const Header: React.FC<HeaderProps> = ({
           </HeaderTitle>
         )}
         
-        {rightContent && (
-          <HeaderRight>
-            {rightContent}
-          </HeaderRight>
-        )}
+        <HeaderRight>
+          <PortfolioBadge>Portfolio Demo</PortfolioBadge>
+          {rightContent}
+        </HeaderRight>
       </HeaderContainer>
     </>
   );
