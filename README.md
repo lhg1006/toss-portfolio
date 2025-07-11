@@ -189,7 +189,7 @@ breakpoints: {
 프로젝트에 대한 문의사항이 있으시면 아래로 연락주세요:
 
 - GitHub: [@lhg1006](https://github.com/lhg1006)
-- Email: your.email@example.com
+- Email: lhg961006@gmail.com
 
 ---
 
