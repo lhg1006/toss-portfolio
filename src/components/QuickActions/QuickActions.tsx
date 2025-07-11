@@ -7,6 +7,7 @@ import { Button } from '@/components/Button';
 interface QuickActionsProps {
   onTransfer: () => void;
   onPay: () => void;
+  onInvest: () => void;
 }
 
 const ActionsContainer = styled.div`
@@ -60,6 +61,7 @@ const ActionLabel = styled.span`
 export const QuickActions: React.FC<QuickActionsProps> = ({
   onTransfer,
   onPay,
+  onInvest,
 }) => {
   return (
     <ActionsContainer>
@@ -71,6 +73,11 @@ export const QuickActions: React.FC<QuickActionsProps> = ({
       <ActionButton variant="secondary" onClick={onPay}>
         <ActionIcon>💳</ActionIcon>
         <ActionLabel>결제</ActionLabel>
+      </ActionButton>
+      
+      <ActionButton variant="secondary" onClick={onInvest}>
+        <ActionIcon>📈</ActionIcon>
+        <ActionLabel>투자</ActionLabel>
       </ActionButton>
     </ActionsContainer>
   );

@@ -38,37 +38,42 @@ const Main = styled.main`
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
   position: relative;
   z-index: 1;
   
   /* 토스 스타일 글래스 컨테이너 */
   background: ${theme.colors.backgrounds.glass};
   backdrop-filter: blur(10px) saturate(120%);
-  border-radius: ${theme.borderRadius.xl};
+  border-radius: 0 0 ${theme.borderRadius.xl} ${theme.borderRadius.xl};
   box-shadow: ${theme.shadows.toss.glass};
   border: 1px solid rgba(255, 255, 255, 0.2);
-  margin-top: calc(60px + ${theme.spacing.md}); /* Header height + margin */
+  border-top: none;
+  margin-top: 0; /* 상단 마진 제거 */
   margin-bottom: ${theme.spacing.md};
+  padding-top: ${theme.spacing.xl}; /* 콘텐츠 시작 위치 */
   padding-bottom: 100px; /* 하단 네비게이션을 위한 공간 */
   
   @media (min-width: ${theme.breakpoints.tablet}) {
     padding: ${theme.spacing.lg};
+    padding-top: ${theme.spacing.xl};
     padding-bottom: 100px;
-    margin-top: calc(60px + ${theme.spacing.lg});
     margin-bottom: ${theme.spacing.lg};
   }
   
   @media (min-width: ${theme.breakpoints.desktop}) {
     padding: ${theme.spacing.xl};
+    padding-top: ${theme.spacing.xxl};
     padding-bottom: 100px;
-    margin-top: calc(60px + ${theme.spacing.xl});
     margin-bottom: ${theme.spacing.xl};
   }
   
   @media (max-width: ${theme.breakpoints.mobile}) {
-    margin-top: calc(56px + ${theme.spacing.sm}); /* Mobile header height */
     margin-bottom: ${theme.spacing.sm};
-    border-radius: ${theme.borderRadius.lg};
+    border-radius: 0 0 ${theme.borderRadius.lg} ${theme.borderRadius.lg};
+    padding: ${theme.spacing.sm};
+    padding-top: ${theme.spacing.lg};
     padding-bottom: 100px;
   }
 `;

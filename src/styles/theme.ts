@@ -66,16 +66,20 @@ export const theme = {
   },
   typography: {
     fontFamily: {
-      // 토스 프로덕트 산스 우선, 웹폰트 로드 실패 시 시스템 폰트 대체
+      // Moneygraphy 우선, 시스템 폰트 백업
       sans: [
-        '"Toss Product Sans"',
-        'TossProductSans',
+        '"Moneygraphy"',
         '-apple-system',
         'BlinkMacSystemFont',
         'SF Pro Text',
         'Segoe UI',
         'Roboto',
         'sans-serif'
+      ],
+      pixel: [
+        '"Moneygraphy Pixel"',
+        '"Moneygraphy"',
+        'monospace'
       ],
       mono: ['SF Mono', 'Monaco', 'Consolas', 'monospace'],
     },

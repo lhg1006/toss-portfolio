@@ -23,27 +23,14 @@ const HeaderContainer = styled.header<{ scrolled: boolean }>`
   padding: 0 ${theme.spacing.lg};
   z-index: 1000;
   transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  pointer-events: ${({ scrolled }) => scrolled ? 'auto' : 'none'};
+  opacity: ${({ scrolled }) => scrolled ? 1 : 0};
+  transform: ${({ scrolled }) => scrolled ? 'translateY(0)' : 'translateY(-10px)'};
   
-  background: ${({ scrolled }) => 
-    scrolled 
-      ? 'rgba(255, 255, 255, 0.9)' 
-      : 'transparent'
-  };
-  backdrop-filter: ${({ scrolled }) => 
-    scrolled 
-      ? 'blur(20px) saturate(180%)' 
-      : 'none'
-  };
-  border-bottom: ${({ scrolled }) => 
-    scrolled 
-      ? '1px solid rgba(255, 255, 255, 0.2)' 
-      : 'none'
-  };
-  box-shadow: ${({ scrolled }) => 
-    scrolled 
-      ? '0 4px 20px rgba(0, 0, 0, 0.1)' 
-      : 'none'
-  };
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   
   @media (max-width: ${theme.breakpoints.mobile}) {
     padding: 0 ${theme.spacing.md};
@@ -90,15 +77,11 @@ const BackIcon = styled.div`
   line-height: 1;
 `;
 
-const HeaderTitle = styled.h1<{ scrolled: boolean }>`
+const HeaderTitle = styled.h1`
   font-size: ${theme.typography.fontSize.lg};
   font-weight: ${theme.typography.fontWeight.bold};
   color: ${theme.colors.gray[900]};
   margin: 0;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  
-  opacity: ${({ scrolled }) => scrolled ? 1 : 0};
-  transform: ${({ scrolled }) => scrolled ? 'translateY(0)' : 'translateY(10px)'};
   
   @media (max-width: ${theme.breakpoints.mobile}) {
     font-size: ${theme.typography.fontSize.md};
@@ -161,7 +144,7 @@ export const Header: React.FC<HeaderProps> = ({
         )}
         
         {title && (
-          <HeaderTitle scrolled={scrolled}>
+          <HeaderTitle>
             {title}
           </HeaderTitle>
         )}

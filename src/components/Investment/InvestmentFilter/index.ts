@@ -1,0 +1,1 @@
+export { InvestmentFilter } from './InvestmentFilter';

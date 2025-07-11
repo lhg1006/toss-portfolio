@@ -62,11 +62,12 @@ const CardTitle = styled.h3`
 `;
 
 const CardValue = styled.div`
+  font-family: ${theme.typography.fontFamily.pixel.join(', ')};
   font-size: ${theme.typography.fontSize['3xl']};
-  font-weight: ${theme.typography.fontWeight.black};
+  font-weight: normal;
   color: ${theme.colors.gray[900]};
   margin-bottom: ${theme.spacing.md};
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
   font-variant-numeric: tabular-nums;
   
   @media (max-width: ${theme.breakpoints.mobile}) {

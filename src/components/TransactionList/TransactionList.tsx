@@ -98,8 +98,9 @@ const TransactionAmount = styled.div<{ type: 'income' | 'expense' }>`
 `;
 
 const Amount = styled.span<{ type: 'income' | 'expense' }>`
+  font-family: ${theme.typography.fontFamily.pixel.join(', ')};
   font-size: ${theme.typography.fontSize.xl};
-  font-weight: ${theme.typography.fontWeight.black};
+  font-weight: normal;
   color: ${({ type }) =>
     type === 'income' ? theme.colors.success : theme.colors.gray[900]};
   letter-spacing: -0.02em;

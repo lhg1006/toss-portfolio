@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import styled from '@emotion/styled';
+import { keyframes } from '@emotion/react';
 import { theme } from '@/styles/theme';
 
 interface CardSliderProps {
@@ -18,26 +19,43 @@ const SliderContainer = styled.div`
 const SliderWrapper = styled.div`
   position: relative;
   height: 240px;
+  overflow: hidden;
+  cursor: grab;
+  
+  &:active {
+    cursor: grabbing;
+  }
   
   @media (max-width: ${theme.breakpoints.mobile}) {
     height: 220px;
   }
 `;
 
-const SliderTrack = styled.div<{ translateX: number; isDragging: boolean; totalWidth: number }>`
+const SliderTrack = styled.div<{ offset: number; isDragging?: boolean }>`
   display: flex;
-  transform: translateX(${(props) => props.translateX}%);
-  transition: ${(props) => props.isDragging ? 'none' : 'transform 0.3s ease-out'};
-  user-select: none;
   height: 100%;
-  width: ${(props) => props.totalWidth}%;
+  transform: translateX(${props => props.offset}px);
+  transition: ${props => props.isDragging ? 'none' : 'transform 0.3s ease-out'};
+  will-change: transform;
 `;
 
-const SlideItem = styled.div<{ cardWidth: number }>`
-  flex: none;
-  padding: ${theme.spacing.sm} ${theme.spacing.sm};
+const SlideItem = styled.div`
+  flex: 0 0 auto;
+  padding: 0 ${theme.spacing.sm};
   box-sizing: border-box;
-  width: ${(props) => props.cardWidth}%;
+  
+  @media (min-width: ${theme.breakpoints.desktop}) {
+    width: calc(100% / 3);
+  }
+  
+  @media (min-width: ${theme.breakpoints.tablet}) and (max-width: ${theme.breakpoints.desktop}) {
+    width: calc(100% / 2);
+  }
+  
+  @media (max-width: ${theme.breakpoints.tablet}) {
+    width: 100%;
+    padding: 0 ${theme.spacing.xs};
+  }
 `;
 
 const NavigationButton = styled.button<{ direction: 'prev' | 'next' }>`
@@ -102,124 +120,193 @@ const Indicator = styled.button<{ active: boolean }>`
   }
 `;
 
+// 스켈레톤 UI
+const shimmer = keyframes`
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+`;
+
+const SkeletonCard = styled.div`
+  background: ${theme.colors.backgrounds.glassBlur};
+  border-radius: ${theme.borderRadius.xl};
+  padding: ${theme.spacing.xl};
+  min-height: 200px;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.4),
+      transparent
+    );
+    background-size: 200px 100%;
+    animation: ${shimmer} 1.5s infinite;
+  }
+  
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    min-height: 180px;
+    padding: ${theme.spacing.lg};
+  }
+`;
+
+const SkeletonElement = styled.div<{ width?: string; height?: string; borderRadius?: string }>`
+  background: rgba(255, 255, 255, 0.7);
+  width: ${props => props.width || '100%'};
+  height: ${props => props.height || '16px'};
+  border-radius: ${props => props.borderRadius || '8px'};
+  margin-bottom: ${theme.spacing.sm};
+  position: relative;
+  z-index: 1;
+`;
+
 export const CardSlider: React.FC<CardSliderProps> = ({ children, showIndicators = true }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [offset, setOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
-  const [startTranslate, setStartTranslate] = useState(0);
-  const [cardsPerView, setCardsPerView] = useState(1);
-  const [isClient, setIsClient] = useState(false);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const sliderRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
 
-  // Get cards per view based on screen size
+  // Calculate cards per view
   const getCardsPerView = () => {
     if (typeof window === 'undefined') return 1;
     const width = window.innerWidth;
-    if (width >= 1024) return 3; // desktop
-    if (width >= 768) return 2;  // tablet
-    return 1; // mobile
+    if (width >= 1024) return 3;
+    if (width >= 768) return 2;
+    return 1;
   };
 
+  const [cardsPerView, setCardsPerView] = useState(1); // 초기값을 1로 고정
+  const maxIndex = Math.max(0, children.length - cardsPerView);
+
   useEffect(() => {
-    setIsClient(true);
-    setCardsPerView(getCardsPerView());
-
-    const handleResize = () => {
-      setCardsPerView(getCardsPerView());
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    setIsMounted(true);
   }, []);
 
-  const maxIndex = Math.max(0, children.length - cardsPerView);
-  const cardWidth = 100 / children.length; // Each card takes equal space in track
-  const totalTrackWidth = (children.length / cardsPerView) * 100; // Track width relative to container
+  useEffect(() => {
+    if (!isMounted) return;
 
-  // 클라이언트에서만 렌더링되도록 보장
-  if (!isClient) {
+    const timer = setTimeout(() => {
+      setIsLoaded(true);
+    }, 150);
+
+    const handleResize = () => {
+      const newCardsPerView = getCardsPerView();
+      setCardsPerView(newCardsPerView);
+      const containerWidth = sliderRef.current?.offsetWidth || 0;
+      const cardWidth = containerWidth / newCardsPerView;
+      setOffset(-currentIndex * cardWidth);
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [currentIndex, isMounted]);
+
+  const updateSliderPosition = (index: number) => {
+    const containerWidth = sliderRef.current?.offsetWidth || 0;
+    const cardWidth = containerWidth / cardsPerView;
+    setOffset(-index * cardWidth);
+    setCurrentIndex(index);
+  };
+
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      updateSliderPosition(currentIndex - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentIndex < maxIndex) {
+      updateSliderPosition(currentIndex + 1);
+    }
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    setStartX(e.pageX - (trackRef.current?.offsetLeft || 0));
+    setScrollLeft(offset);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - (trackRef.current?.offsetLeft || 0);
+    const walk = x - startX;
+    setOffset(scrollLeft + walk);
+  };
+
+  const handleMouseUp = () => {
+    if (!isDragging) return;
+    setIsDragging(false);
+    
+    const containerWidth = sliderRef.current?.offsetWidth || 0;
+    const cardWidth = containerWidth / cardsPerView;
+    const draggedCards = Math.round(-offset / cardWidth);
+    const newIndex = Math.max(0, Math.min(maxIndex, draggedCards));
+    updateSliderPosition(newIndex);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsDragging(true);
+    setStartX(e.touches[0].pageX - (trackRef.current?.offsetLeft || 0));
+    setScrollLeft(offset);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging) return;
+    const x = e.touches[0].pageX - (trackRef.current?.offsetLeft || 0);
+    const walk = x - startX;
+    setOffset(scrollLeft + walk);
+  };
+
+  const handleTouchEnd = () => {
+    handleMouseUp();
+  };
+
+  if (!isMounted || !isLoaded) {
     return (
       <SliderContainer>
         <SliderWrapper>
-          <SliderTrack translateX={0} isDragging={false} totalWidth={100}>
-            {children.map((child, index) => (
-              <SlideItem key={index} cardWidth={100 / children.length}>{child}</SlideItem>
+          <SliderTrack offset={0} isDragging={false}>
+            {Array.from({ length: 1 }, (_, i) => (
+              <SlideItem key={`skeleton-${i}`}>
+                <SkeletonCard>
+                  <SkeletonElement height="24px" width="70%" borderRadius="8px" />
+                  <SkeletonElement height="16px" width="50%" borderRadius="6px" />
+                  <div style={{ marginTop: '24px' }}>
+                    <SkeletonElement height="40px" width="90%" borderRadius="12px" />
+                  </div>
+                  <div style={{ marginTop: '16px' }}>
+                    <SkeletonElement height="32px" width="60%" borderRadius="16px" />
+                  </div>
+                </SkeletonCard>
+              </SlideItem>
             ))}
           </SliderTrack>
         </SliderWrapper>
       </SliderContainer>
     );
   }
-
-  const handlePrev = () => {
-    setCurrentIndex(Math.max(0, currentIndex - 1));
-  };
-
-  const handleNext = () => {
-    setCurrentIndex(Math.min(maxIndex, currentIndex + 1));
-  };
-
-  const handleIndicatorClick = (index: number) => {
-    setCurrentIndex(Math.min(maxIndex, index));
-  };
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    setIsDragging(true);
-    setStartX(e.clientX);
-    setStartTranslate(currentIndex);
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging) return;
-    
-    const diff = e.clientX - startX;
-    const containerWidth = sliderRef.current?.offsetWidth || 0;
-    const threshold = containerWidth / cardsPerView / 4; // 25% of card width
-    
-    if (Math.abs(diff) > threshold) {
-      if (diff > 0 && currentIndex > 0) {
-        setCurrentIndex(currentIndex - 1);
-        setIsDragging(false);
-      } else if (diff < 0 && currentIndex < maxIndex) {
-        setCurrentIndex(currentIndex + 1);
-        setIsDragging(false);
-      }
-    }
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setIsDragging(true);
-    setStartX(e.touches[0].clientX);
-    setStartTranslate(currentIndex);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging) return;
-    
-    const diff = e.touches[0].clientX - startX;
-    const containerWidth = sliderRef.current?.offsetWidth || 0;
-    const threshold = containerWidth / cardsPerView / 4;
-    
-    if (Math.abs(diff) > threshold) {
-      if (diff > 0 && currentIndex > 0) {
-        setCurrentIndex(currentIndex - 1);
-        setIsDragging(false);
-      } else if (diff < 0 && currentIndex < maxIndex) {
-        setCurrentIndex(currentIndex + 1);
-        setIsDragging(false);
-      }
-    }
-  };
-
-  const handleTouchEnd = () => {
-    setIsDragging(false);
-  };
-
-  const translateX = -(currentIndex * cardWidth * cardsPerView);
 
   return (
     <SliderContainer>
@@ -233,13 +320,9 @@ export const CardSlider: React.FC<CardSliderProps> = ({ children, showIndicators
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <SliderTrack 
-          translateX={translateX}
-          isDragging={isDragging}
-          totalWidth={totalTrackWidth}
-        >
+        <SliderTrack ref={trackRef} offset={offset} isDragging={isDragging}>
           {children.map((child, index) => (
-            <SlideItem key={index} cardWidth={cardWidth}>{child}</SlideItem>
+            <SlideItem key={index}>{child}</SlideItem>
           ))}
         </SliderTrack>
         
@@ -259,14 +342,14 @@ export const CardSlider: React.FC<CardSliderProps> = ({ children, showIndicators
           →
         </NavigationButton>
       </SliderWrapper>
-
-      {showIndicators && (
+      
+      {showIndicators && maxIndex > 0 && (
         <Indicators>
           {Array.from({ length: maxIndex + 1 }, (_, index) => (
             <Indicator
               key={index}
               active={index === currentIndex}
-              onClick={() => handleIndicatorClick(index)}
+              onClick={() => updateSliderPosition(index)}
             />
           ))}
         </Indicators>

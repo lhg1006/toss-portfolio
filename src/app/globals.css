@@ -1,39 +1,22 @@
-/* 토스 프로덕트 산스 웹폰트 로딩 */
+/* Moneygraphy 폰트 로딩 */
 @font-face {
-  font-family: 'Toss Product Sans';
-  src: url('https://static.toss.im/fonts/TossProductSans-Regular.woff2') format('woff2'),
-       url('https://static.toss.im/fonts/TossProductSans-Regular.woff') format('woff');
-  font-weight: 400;
+  font-family: 'Moneygraphy';
+  src: url('/fonts/moneygraphy/Moneygraphy-Rounded.woff2') format('woff2'),
+       url('/fonts/moneygraphy/Moneygraphy-Rounded.woff') format('woff');
+  font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Toss Product Sans';
-  src: url('https://static.toss.im/fonts/TossProductSans-Medium.woff2') format('woff2'),
-       url('https://static.toss.im/fonts/TossProductSans-Medium.woff') format('woff');
-  font-weight: 500;
+  font-family: 'Moneygraphy Pixel';
+  src: url('/fonts/moneygraphy/Moneygraphy-Pixel.woff2') format('woff2'),
+       url('/fonts/moneygraphy/Moneygraphy-Pixel.woff') format('woff');
+  font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
 
-@font-face {
-  font-family: 'Toss Product Sans';
-  src: url('https://static.toss.im/fonts/TossProductSans-SemiBold.woff2') format('woff2'),
-       url('https://static.toss.im/fonts/TossProductSans-SemiBold.woff') format('woff');
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Toss Product Sans';
-  src: url('https://static.toss.im/fonts/TossProductSans-Bold.woff2') format('woff2'),
-       url('https://static.toss.im/fonts/TossProductSans-Bold.woff') format('woff');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
 
 /* 토스 디자인 토큰 */
 :root {
@@ -73,7 +56,7 @@ body {
   color: var(--foreground);
   background: var(--background);
   background-attachment: fixed;
-  font-family: 'Toss Product Sans', 'TossProductSans', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', 'Roboto', sans-serif;
+  font-family: 'Moneygraphy', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', 'Roboto', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-feature-settings: 'kern' 1, 'liga' 1;

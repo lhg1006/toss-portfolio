@@ -17,6 +17,7 @@ export const Default: Story = {
   args: {
     onTransfer: () => console.log('송금 버튼 클릭'),
     onPay: () => console.log('결제 버튼 클릭'),
+    onInvest: () => console.log('투자 버튼 클릭'),
   },
 };
 
@@ -24,6 +25,7 @@ export const MobileView: Story = {
   args: {
     onTransfer: () => console.log('송금 버튼 클릭'),
     onPay: () => console.log('결제 버튼 클릭'),
+    onInvest: () => console.log('투자 버튼 클릭'),
   },
   parameters: {
     viewport: {

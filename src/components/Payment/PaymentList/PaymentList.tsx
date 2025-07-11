@@ -134,10 +134,11 @@ const PaymentAmount = styled.div`
 `;
 
 const Amount = styled.span`
+  font-family: ${theme.typography.fontFamily.pixel.join(', ')};
   font-size: ${theme.typography.fontSize.xl};
-  font-weight: ${theme.typography.fontWeight.black};
+  font-weight: normal;
   color: ${theme.colors.gray[900]};
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
   line-height: ${theme.typography.lineHeight.tight};
   font-variant-numeric: tabular-nums;
   

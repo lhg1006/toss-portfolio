@@ -1,6 +1,7 @@
 'use client';
 
 import styled from '@emotion/styled';
+import { keyframes } from '@emotion/react';
 import { theme } from '@/styles/theme';
 import { Card } from '@/components/Card';
 import { useState } from 'react';
@@ -13,6 +14,7 @@ interface AccountCardProps {
   cardColor?: 'blue' | 'purple' | 'green' | 'orange';
   balanceVisible?: boolean;
   onToggleBalance?: () => void;
+  isLoading?: boolean;
 }
 
 const CardContainer = styled.div<{ cardColor?: string }>`
@@ -34,6 +36,8 @@ const CardContainer = styled.div<{ cardColor?: string }>`
   padding: ${theme.spacing.xl};
   min-height: 200px;
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -41,14 +45,15 @@ const CardContainer = styled.div<{ cardColor?: string }>`
   overflow: hidden;
   transition: ${theme.effects.transition};
   box-shadow: ${theme.shadows.toss.card};
+  will-change: transform, box-shadow;
   
   &:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
   }
   
   &:active {
-    transform: translateY(-2px) scale(1.01);
+    transform: translateY(-1px);
   }
   
   &::before {
@@ -78,8 +83,7 @@ const CardContainer = styled.div<{ cardColor?: string }>`
   
   @media (max-width: ${theme.breakpoints.mobile}) {
     min-height: 180px;
-    min-width: 250px;
-    padding: ${theme.spacing.lg};
+    padding: ${theme.spacing.md};
   }
 `;
 
@@ -126,12 +130,12 @@ const CopyButton = styled.button`
   
   &:hover {
     background: rgba(255, 255, 255, 0.35);
-    transform: scale(1.05) translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: scale(1.03);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   }
   
   &:active {
-    transform: scale(0.95);
+    transform: scale(0.98);
     background: rgba(255, 255, 255, 0.4);
   }
 `;
@@ -145,17 +149,19 @@ const CardBody = styled.div`
 `;
 
 const BalanceAmount = styled.h2<{ hidden?: boolean }>`
-  font-size: ${theme.typography.fontSize['4xl']};
-  font-weight: ${theme.typography.fontWeight.black};
+  font-family: ${theme.typography.fontFamily.pixel.join(', ')};
+  font-size: ${theme.typography.fontSize['2xl']};
+  font-weight: normal;
   margin: 0;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.01em;
   line-height: ${theme.typography.lineHeight.tight};
   position: relative;
-  min-height: 48px;
+  min-height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  font-variant-numeric: tabular-nums;
   
   ${(props) => props.hidden && `
     filter: blur(8px);
@@ -165,8 +171,8 @@ const BalanceAmount = styled.h2<{ hidden?: boolean }>`
   `}
   
   @media (max-width: ${theme.breakpoints.mobile}) {
-    font-size: ${theme.typography.fontSize['3xl']};
-    min-height: 42px;
+    font-size: ${theme.typography.fontSize.xl};
+    min-height: 32px;
   }
 `;
 
@@ -185,12 +191,12 @@ const ToggleButton = styled.button`
   
   &:hover {
     background: rgba(255, 255, 255, 0.4);
-    transform: scale(1.1) translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
   
   &:active {
-    transform: scale(0.95);
+    transform: scale(0.98);
     background: rgba(255, 255, 255, 0.5);
   }
 `;
@@ -208,6 +214,44 @@ const AccountInfo = styled.div`
   gap: ${theme.spacing.xs};
 `;
 
+// 스켈레톤 UI 컴포넌트들
+const shimmer = keyframes`
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+`;
+
+const SkeletonElement = styled.div<{ width?: string; height?: string; borderRadius?: string }>`
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.3),
+    rgba(255, 255, 255, 0.6),
+    rgba(255, 255, 255, 0.3)
+  );
+  background-size: 200px 100%;
+  animation: ${shimmer} 1.5s infinite;
+  width: ${props => props.width || '100%'};
+  height: ${props => props.height || '16px'};
+  border-radius: ${props => props.borderRadius || '8px'};
+  margin-bottom: ${theme.spacing.sm};
+`;
+
+const SkeletonCardContent = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0;
+  
+  & > div:last-child {
+    margin-bottom: 0;
+  }
+`;
+
 export const AccountCard: React.FC<AccountCardProps> = ({
   accountName,
   accountNumber,
@@ -215,6 +259,7 @@ export const AccountCard: React.FC<AccountCardProps> = ({
   cardColor = 'blue',
   balanceVisible = true,
   onToggleBalance,
+  isLoading = false,
 }) => {
   const { showToast } = useToast();
   
@@ -245,6 +290,31 @@ export const AccountCard: React.FC<AccountCardProps> = ({
       onToggleBalance();
     }
   };
+
+  if (isLoading) {
+    return (
+      <CardContainer cardColor={cardColor}>
+        <SkeletonCardContent>
+          <div>
+            <CardHeader>
+              <AccountInfo>
+                <SkeletonElement width="60%" height="24px" borderRadius="8px" />
+                <SkeletonElement width="45%" height="16px" borderRadius="6px" />
+              </AccountInfo>
+              <SkeletonElement width="40px" height="32px" borderRadius="16px" />
+            </CardHeader>
+          </div>
+          
+          <div>
+            <CardBody>
+              <SkeletonElement width="80%" height="48px" borderRadius="12px" />
+              <SkeletonElement width="50%" height="32px" borderRadius="16px" />
+            </CardBody>
+          </div>
+        </SkeletonCardContent>
+      </CardContainer>
+    );
+  }
 
   return (
     <CardContainer cardColor={cardColor}>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/react';
 import { theme } from '@/styles/theme';
@@ -114,35 +114,42 @@ const AccountsGrid = styled.div<{ isVisible: boolean }>`
   display: grid;
   gap: ${theme.spacing.md};
   opacity: ${props => props.isVisible ? 1 : 0};
-  animation: ${props => props.isVisible ? scaleIn : 'none'} 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  min-height: 240px; /* 최소 높이 고정으로 레이아웃 시프트 방지 */
   
   @media (min-width: ${theme.breakpoints.desktop}) {
     grid-template-columns: repeat(3, 1fr);
     max-width: 1200px;
     margin: 0 auto;
+    min-height: 220px;
   }
   
   @media (min-width: ${theme.breakpoints.tablet}) and (max-width: ${theme.breakpoints.desktop}) {
     grid-template-columns: repeat(2, 1fr);
+    min-height: 440px;
   }
   
   @media (max-width: ${theme.breakpoints.tablet}) {
     grid-template-columns: 1fr;
+    min-height: 880px;
   }
   
   & > div {
-    animation: ${fadeIn} 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
-    
-    &:nth-of-type(1) { animation-delay: 0.1s; }
-    &:nth-of-type(2) { animation-delay: 0.2s; }
-    &:nth-of-type(3) { animation-delay: 0.3s; }
-    &:nth-of-type(4) { animation-delay: 0.4s; }
+    /* 개별 카드 애니메이션 제거로 reflow 최소화 */
+    opacity: ${props => props.isVisible ? 1 : 0};
+    transition: opacity 0.3s ease-out;
   }
 `;
 
 const SliderContainer = styled.div<{ isVisible: boolean }>`
   opacity: ${props => props.isVisible ? 1 : 0};
-  animation: ${props => props.isVisible ? slideIn : 'none'} 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: opacity 0.3s ease-out;
+  min-height: 240px; /* 슬라이더 최소 높이 고정 */
+  overflow: hidden;
+  width: 100%;
+  
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    min-height: 220px;
+  }
 `;
 
 
@@ -182,6 +189,7 @@ export default function Home() {
   ]);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [cardsLoaded, setCardsLoaded] = useState(false);
   
   const accounts = [
     {
@@ -241,12 +249,24 @@ export default function Home() {
     },
   ];
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setCardsLoaded(true);
+    }, 200);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   const handleTransfer = () => {
     window.location.href = '/transfer';
   };
 
   const handlePay = () => {
-    console.log("결제 기능");
+    window.location.href = '/pay';
+  };
+
+  const handleInvest = () => {
+    window.location.href = '/invest';
   };
 
   const handleLoadMore = () => {
@@ -299,11 +319,12 @@ export default function Home() {
           </SectionHeader>
           
           {isGridView ? (
-            <AccountsGrid isVisible={isGridView}>
+            <AccountsGrid isVisible={true}>
               {accounts.map((account) => (
                 <AccountCard 
                   key={account.id} 
                   {...account} 
+                  isLoading={!cardsLoaded}
                   balanceVisible={balanceVisibility[account.id]}
                   onToggleBalance={() => {
                     setBalanceVisibility(prev => ({
@@ -315,18 +336,19 @@ export default function Home() {
               ))}
             </AccountsGrid>
           ) : (
-            <SliderContainer isVisible={!isGridView}>
+            <SliderContainer isVisible={true}>
               <CardSlider>
                 {accounts.map((account) => (
                   <AccountCard 
                     key={account.id} 
                     {...account} 
+                    isLoading={!cardsLoaded}
                     balanceVisible={balanceVisibility[account.id]}
                     onToggleBalance={() => {
                       setBalanceVisibility(prev => ({
                         ...prev,
                         [account.id]: !prev[account.id]
-                      }));
+                    }));
                     }}
                   />
                 ))}
@@ -344,6 +366,7 @@ export default function Home() {
           <QuickActions
             onTransfer={handleTransfer}
             onPay={handlePay}
+            onInvest={handleInvest}
           />
         </Section>
 
