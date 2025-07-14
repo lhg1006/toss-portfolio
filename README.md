@@ -8,6 +8,12 @@
 **👉 [https://toss-portfolio.vercel.app/](https://toss-portfolio.vercel.app/)**
 
 실제 동작하는 데모를 확인하실 수 있습니다. 모든 기능이 구현되어 있으며, 반응형 디자인을 직접 체험해보세요!
+<table>
+  <tr>
+    <td><img src="https://raw.githubusercontent.com/lhg1006/portfolio-images/846014a4c2e06cc867feed4ad26f28a296488642/images/project/main.gif" width="100%" alt="메인 화면"></td>
+    <td><img src="https://raw.githubusercontent.com/lhg1006/portfolio-images/846014a4c2e06cc867feed4ad26f28a296488642/images/project/send.gif" width="100%" alt="송금 화면"></td>
+  </tr>
+</table>
 
 ## 📖 프로젝트 개요
 
